@@ -1,9 +1,10 @@
 const multer = require("multer");
 const path = require("path");
+
 //Storage Engin That Tells/Configures Multer for where (destination) and how (filename) to save/upload our files
 const fileStorageEngine = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./assets");
+    cb(null, "../assets");
   },
   filename: (req, file, cb) => {
     const userId = req.headers.userid;

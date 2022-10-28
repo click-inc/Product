@@ -1,8 +1,9 @@
 const express = require("express");
 const Item = require("../models/item");
+const path = require("path");
 const Auth = require("../middleware/auth");
 
-const upload = require("../middleware/fileUpload");
+// const upload = require("../middleware/fileUpload");
 
 const router = new express.Router();
 
@@ -49,7 +50,7 @@ router.get("/items/one", Auth, async (req, res) => {
 });
 
 //create an item
-router.post("/items", Auth, upload, async (req, res) => {
+router.post("/items", Auth, async (req, res) => {
   try {
     const newItem = new Item({
       ...req.body,
