@@ -2,10 +2,12 @@ const express = require("express");
 const Item = require("../models/item");
 const Auth = require("../middleware/auth");
 
+const upload = require("../middleware/fileUpload");
+
 const router = new express.Router();
 
 //fetch all items
-router.get("/items", async (req, res) => {
+router.get("/items", Auth, async (req, res) => {
   console.log(req.query);
   if (req.query.user == "1") {
     console.log(req.headers.userid);
@@ -16,16 +18,14 @@ router.get("/items", async (req, res) => {
       console.log(error);
       res.status(500).send("something went wrong");
     }
-  } 
-  else if(req.body.name){
+  } else if (req.body.name) {
     try {
       const items = await Item.find({ name: req.body.name });
       res.status(200).send(items);
     } catch (error) {
       res.status(400).send(error);
     }
-  }
-  else {
+  } else {
     try {
       const items = await Item.find({});
       res.status(200).send(items);
@@ -36,7 +36,7 @@ router.get("/items", async (req, res) => {
 });
 
 //fetch an item
-router.get("/items/one", async (req, res) => {
+router.get("/items/one", Auth, async (req, res) => {
   try {
     const item = await Item.findOne({ _id: req.headers.id });
     if (!item) {
@@ -49,7 +49,7 @@ router.get("/items/one", async (req, res) => {
 });
 
 //create an item
-router.post("/items", async (req, res) => {
+router.post("/items", Auth, upload, async (req, res) => {
   try {
     const newItem = new Item({
       ...req.body,
@@ -64,7 +64,7 @@ router.post("/items", async (req, res) => {
 
 //update an item
 
-router.patch("/items", async (req, res) => {
+router.patch("/items", Auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["name", "description", "category", "price", "image"];
 
@@ -92,7 +92,7 @@ router.patch("/items", async (req, res) => {
 });
 
 //delete item
-router.delete("/items", async (req, res) => {
+router.delete("/items", Auth, async (req, res) => {
   try {
     const deletedItem = await Item.findOneAndDelete({ _id: req.headers.id });
     if (!deletedItem) {
